@@ -70,7 +70,7 @@ def dpsk_reply():
     # load model
     client = Groq()
     completion = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="deepseek-r1-distill-llama-70b",
         messages=[
             {
                 "role": "user",
