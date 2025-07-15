@@ -23,6 +23,10 @@ def main():
 def llama():
     return(render_template("llama.html"))
 
+@app.route("/dpsk",methods=["GET","POST"])
+def dpsk():
+    return(render_template("dpsk.html"))
+
 @app.route("/dbs",methods=["GET","POST"])
 def dbs():
     return(render_template("dbs.html"))
@@ -58,6 +62,25 @@ def llama_reply():
     # print(completion.choices[0].message.content)
 
     return(render_template("llama_reply.html", r=completion.choices[0].message.content))
+
+@app.route("/dpsk_reply",methods=["GET","POST"])
+def dpsk_reply():
+    q = request.form.get("q")
+
+    # load model
+    client = Groq()
+    completion = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[
+            {
+                "role": "user",
+                "content": q
+            }
+        ]
+    )
+    # print(completion.choices[0].message.content)
+
+    return(render_template("dpsk_reply.html", r=completion.choices[0].message.content))
 
 if __name__ == "__main__":
     app.run()
