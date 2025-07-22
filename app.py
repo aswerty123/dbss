@@ -46,6 +46,26 @@ def prediction():
 
     return(render_template("prediction.html", r=pred))
 
+@app.route("/check_spam",methods=["GET","POST"])
+def check_spam():
+    return(render_template("check_spam.html"))
+
+@app.route("/check_spam_reply",methods=["GET","POST"])
+def check_spam_reply():
+    q = request.form.get("q")
+
+    # load model
+    encoder = joblib.load('cv_encoder.pkl')
+    model = joblib.load('lr_model.pkl')
+
+    X_vec = encoder.transform([q])
+
+    # make prediction
+    pred = model.predict(X_vec)
+
+
+    return(render_template("check_spam_reply.html", r=pred))
+
 @app.route("/llama_reply",methods=["GET","POST"])
 def llama_reply():
     q = request.form.get("q")
