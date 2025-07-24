@@ -1,0 +1,19 @@
+<head>
+       
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/5.38.1/gradio.js"></script>
+</head>
+
+
+<body>
+    <div class="container">
+        <h2>Sepia from Hugging Face</h2>
+        <gradio-app src="https://qwerrty1234567890-sepia.hf.space"></gradio-app>
+
+            <form action="/main" method="post">
+                    <input type="submit" value="Main">
+                </form>
+    </div>
+</body>

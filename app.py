@@ -210,5 +210,9 @@ def delete_user_log():
     
     return(render_template("delete_log.html", r=r))
 
+@app.route("/view_sepia",methods=["GET","POST"])
+def view_sepia():
+    return(render_template("view_sepia.html"))
+
 if __name__ == "__main__":
     app.run()
