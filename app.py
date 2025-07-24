@@ -3,6 +3,8 @@ import joblib
 from groq import Groq
 import requests
 import os
+import sqlite3
+import datetime
 
 # os.environ['GROQ_API_KEY'] = os.getenv("GROQ_API_KEY")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -17,8 +19,12 @@ def index():
 @app.route("/main",methods=["GET","POST"])
 def main():
     q = request.form.get("q")
+    # db - insert
+    conn = sqlite3.connect('user.db')
+    conn.execute('INSERT INTO user (name, timestamp) VALUES (?,?)',(q, datetime.datetime.now()))
+    conn.commit()
+    conn.close()
 
-    # db
     return(render_template("main.html"))
 
 @app.route("/llama",methods=["GET","POST"])
@@ -46,12 +52,12 @@ def prediction():
 
     return(render_template("prediction.html", r=pred))
 
-@app.route("/check_spam",methods=["GET","POST"])
-def check_spam():
-    return(render_template("check_spam.html"))
+@app.route("/check_spam_cv",methods=["GET","POST"])
+def check_spam_cv():
+    return(render_template("check_spam_cv.html"))
 
-@app.route("/check_spam_reply",methods=["GET","POST"])
-def check_spam_reply():
+@app.route("/check_spam_cv_reply",methods=["GET","POST"])
+def check_spam_cv_reply():
     q = request.form.get("q")
 
     # load model
@@ -64,7 +70,7 @@ def check_spam_reply():
     pred = model.predict(X_vec)
 
 
-    return(render_template("check_spam_reply.html", r=pred))
+    return(render_template("check_spam_cv_reply.html", r=pred))
 
 @app.route("/llama_reply",methods=["GET","POST"])
 def llama_reply():
@@ -175,6 +181,34 @@ def webhook():
             "text": response_message
         })
     return('ok', 200)
+
+@app.route("/get_user_log",methods=["GET","POST"])
+def get_user_log():
+
+    conn = sqlite3.connect('user.db')
+    c = conn.cursor()
+    c.execute('SELECT * FROM user')
+    rows = c.fetchall()
+    
+    c.close()
+    conn.close()
+    
+    return(render_template("user_log.html", r=rows))
+
+@app.route("/delete_user_log",methods=["GET","POST"])
+def delete_user_log():
+
+    conn = sqlite3.connect('user.db')
+    c = conn.cursor()
+    rows_deleted = c.execute('DELETE FROM user').rowcount
+ 
+    conn.commit()
+    c.close()
+    conn.close()
+
+    r= f"Deleted {rows_deleted} rows from the user table"
+    
+    return(render_template("delete_log.html", r=r))
 
 if __name__ == "__main__":
     app.run()
